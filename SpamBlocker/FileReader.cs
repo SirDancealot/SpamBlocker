@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace SpamBlocker
@@ -23,7 +25,14 @@ namespace SpamBlocker
                     f = fInfo;
             }
 
+            if (f.Length == 0 && Program.debug())
+                Logger.getINSTANCE().logZero();
+
+            f = f.CopyTo(ConfigurationManager.AppSettings.Get("RunLocation") + "tmp.LOG");
+
             ReadFile(f.FullName, addrs);
+
+            f.Delete();
 
             return addrs;
         }

@@ -63,7 +63,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExtraCheck.cs" />
     <Compile Include="FileReader.cs" />
     <Compile Include="FirewallManager.cs" />
     <Compile Include="IPaddr.cs" />

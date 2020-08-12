@@ -31,7 +31,7 @@ namespace SpamBlocker
                 _rule.Enabled = true;
                 _rule.Name = ruleName;
                 _rule.Action = NET_FW_ACTION_.NET_FW_ACTION_BLOCK;
-                _rule.Description = "Rule blocking spam attempts from frequent trying IP-addresses";
+                _rule.Description = "Rule blocking spam attempts from frequently trying IP-addresses";
                 _rule.Profiles = 0b111;
             }
 
@@ -44,7 +44,7 @@ namespace SpamBlocker
 
             foreach (IPaddr ip in ips.Values)
             {
-                if (ip.Count >= Int32.Parse(ConfigurationManager.AppSettings.Get("Count")))
+                if (ip.Count >= Int32.Parse(ConfigurationManager.AppSettings.Get("count")))
                 {
                     noTrheads = false;
                     sb.Append(ip).Append(',');
@@ -59,7 +59,6 @@ namespace SpamBlocker
                 fwPolicy2.Rules.Add(_rule);
 
             _rule.RemoteAddresses = sb.ToString();
-            l.close();
         }
     }
 }

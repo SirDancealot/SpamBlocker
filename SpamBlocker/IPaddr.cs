@@ -7,24 +7,17 @@ namespace SpamBlocker
     class IPaddr
     {
         public readonly string Ip;
-        public readonly int Mask;
 
-        public IPaddr(string ip, int mask = 32)
+        public IPaddr(string ip)
         {
             Ip = ip;
-            Mask = mask;
         }
 
         public int Count { get; set; } = 1;
 
         public void Registrer(int num = 1) => Count += num;
 
-        public override string ToString()
-        {
-            if (Mask != 0 && Mask != 32)
-                return Ip;
-            return Ip + "/" + Mask;
-        }
+        public override string ToString() => Ip;
 
         public int ToBits()
         {
@@ -52,16 +45,6 @@ namespace SpamBlocker
             int bits = ToBits() & bitMask;
 
             return BitsToString(bits);
-        }
-
-        public static IPaddr fromBitMask(int bits, int mask)
-        {
-            return new IPaddr(BitsToString(bits), mask);
-        }
-
-        public static IPaddr fromBitMask(string bits, int mask)
-        {
-            return new IPaddr(bits, mask);
         }
 
         private static string BitsToString(int bits)
