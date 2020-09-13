@@ -14,6 +14,7 @@ namespace SpamBlocker
         }
 
         public int Count { get; set; } = 1;
+        public string sourceFile { get; set; }
 
         public void Registrer(int num = 1) => Count += num;
 

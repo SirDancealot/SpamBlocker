@@ -18,28 +18,28 @@ namespace SpamBlocker
             }
 
             var directory = new DirectoryInfo(folder);
-            FileInfo f = directory.GetFiles()[0];
-            foreach (var fInfo in directory.GetFiles())
+            FileInfo f = directory.GetFiles().OrderBy(sf => sf.Name).Last();
+            
+            if (Program.debug())
             {
-                if (fInfo.LastWriteTime.CompareTo(f.LastWriteTime) > 0)
-                    f = fInfo;
+                if (f.Length == 0)
+                    Logger.getINSTANCE().logZero();
+                Logger.getINSTANCE().logFName(f.Name);
             }
 
-            if (f.Length == 0 && Program.debug())
-                Logger.getINSTANCE().logZero();
 
+            string sourceFile = f.Name;
             f = f.CopyTo(ConfigurationManager.AppSettings.Get("RunLocation") + "tmp.LOG");
-
-            ReadFile(f.FullName, addrs);
-
+            ReadFile(f, addrs, sourceFile);
             f.Delete();
 
             return addrs;
         }
 
-        private static void ReadFile(string fpath, Dictionary<string, IPaddr> addrs)
+        private static void ReadFile(FileInfo f, Dictionary<string, IPaddr> addrs, string sourceFile)
         {
-            foreach (string line in File.ReadLines(fpath))
+            string fPath = f.FullName;
+            foreach (string line in File.ReadLines(fPath))
             {
                 if (line.Contains("due to '504 5.7.4 Unrecognized authentication type'"))
                 {
@@ -50,7 +50,9 @@ namespace SpamBlocker
                     }
                     else
                     {
-                        addrs.Add(ip, new IPaddr(ip));
+                        IPaddr oIp = new IPaddr(ip);
+                        oIp.sourceFile = sourceFile;
+                        addrs.Add(ip, oIp);
                     }
                 }
             }

@@ -46,6 +46,10 @@ namespace SpamBlocker
             }
         }
 
+        internal void logFName(string name)
+        {
+            fOut.WriteLine("Name of the accessed file is: " + name);
+        }
 
         public void logIP(IPaddr ip)
         {
@@ -58,7 +62,9 @@ namespace SpamBlocker
                 .Append(" was blocked with ")
                 .Append(ip.Count)
                 .Append(" attempts on the ")
-                .Append(now);
+                .Append(now)
+                .Append(" from file ")
+                .Append(ip.sourceFile);
             //.Append('\n');
             //fOut.Write(Encoding.ASCII.GetBytes(sb.ToString()), 0, sb.Length);
             fOut.WriteLine(sb.ToString());
