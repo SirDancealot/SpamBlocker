@@ -1,11 +1,13 @@
-﻿using System;
+﻿using SpamBlocker.program.data;
+using SpamBlocker.program.ui;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace SpamBlocker
+namespace SpamBlocker.program.logic
 {
     class FileReader
     {
@@ -19,7 +21,7 @@ namespace SpamBlocker
 
             var directory = new DirectoryInfo(folder);
             FileInfo f = directory.GetFiles().OrderBy(sf => sf.Name).Last();
-            
+
             if (Program.debug())
             {
                 if (f.Length == 0)
@@ -29,7 +31,7 @@ namespace SpamBlocker
 
 
             string sourceFile = f.Name;
-            f = f.CopyTo(ConfigurationManager.AppSettings.Get("RunLocation") + "tmp.LOG");
+            f = f.CopyTo(ConfigurationManager.AppSettings.Get("runLocation") + "tmp.LOG");
             ReadFile(f, addrs, sourceFile);
             f.Delete();
 

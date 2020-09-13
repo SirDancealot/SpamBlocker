@@ -63,11 +63,14 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileReader.cs" />
-    <Compile Include="FirewallManager.cs" />
-    <Compile Include="IPaddr.cs" />
-    <Compile Include="Logger.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="program\data\FileSettingElement.cs" />
+    <Compile Include="program\data\FileSettingSection.cs" />
+    <Compile Include="program\data\FileSettingElementCollection.cs" />
+    <Compile Include="program\logic\FileReader.cs" />
+    <Compile Include="program\logic\FirewallManager.cs" />
+    <Compile Include="program\data\IPaddr.cs" />
+    <Compile Include="program\ui\Logger.cs" />
+    <Compile Include="program\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

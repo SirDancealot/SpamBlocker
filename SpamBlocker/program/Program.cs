@@ -1,4 +1,7 @@
-﻿using System;
+﻿using SpamBlocker.program.data;
+using SpamBlocker.program.logic;
+using SpamBlocker.program.ui;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
@@ -7,7 +10,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpamBlocker
+namespace SpamBlocker.program
 {
     class Program
     {
@@ -17,6 +20,13 @@ namespace SpamBlocker
 
         static void Main(string[] args)
         {
+            FileSettingSection section = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).Sections["fileSettingsSection"] as FileSettingSection;
+            FileSettingElementCollection coll = section.FileSettings;
+            foreach (FileSettingElement element in coll)
+            {
+                Console.WriteLine(element.ReadPath);
+            }
+
             Logger l = Logger.getINSTANCE();
             if (debug())
             {

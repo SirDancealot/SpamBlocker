@@ -1,22 +1,23 @@
-﻿using System;
+﻿using SpamBlocker.program.data;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace SpamBlocker
+namespace SpamBlocker.program.ui
 {
 
     class Logger
     {
         private static Logger INSTANCE;
-        private static readonly string logPath = ConfigurationManager.AppSettings.Get("RunLocation") + "Log.txt";
+        private static readonly string logPath = ConfigurationManager.AppSettings.Get("runLocation") + "Log.txt";
         private string logContent;
 
         internal void logRun()
         {
-            fOut.WriteLine("SpamBlocker was ran the " + DateTime.Now);
+            fOut.WriteLine("SpamBlocker was run the " + DateTime.Now);
         }
 
         internal void logZero()

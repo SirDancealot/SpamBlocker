@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
 using NetFwTypeLib;
+using SpamBlocker.program.data;
+using SpamBlocker.program.ui;
 
-namespace SpamBlocker
+namespace SpamBlocker.program.logic
 {
     class FirewallManager
     {
         private static readonly string ruleName = ConfigurationManager.AppSettings.Get("fwRuleName");
-        
+
         public static void BlockIPs(Dictionary<string, IPaddr> ips)
         {
             bool newRule = false;
@@ -44,13 +46,13 @@ namespace SpamBlocker
 
             foreach (IPaddr ip in ips.Values)
             {
-                if (ip.Count >= Int32.Parse(ConfigurationManager.AppSettings.Get("count")))
+                if (ip.Count >= int.Parse(ConfigurationManager.AppSettings.Get("count")))
                 {
                     noTrheads = false;
                     sb.Append(ip).Append(',');
                     l.logIP(ip);
                 }
-                    
+
             }
             if (sb.Length > 0)
                 sb.Remove(sb.Length - 1, 1);
