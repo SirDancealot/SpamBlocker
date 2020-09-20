@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpamBlocker.program.data
+namespace SpamBlocker.program.data.FileSetting
 {
     [ConfigurationCollection(typeof(FileSettingElement), AddItemName = "fileSetting")]
     class FileSettingElementCollection : ConfigurationElementCollection

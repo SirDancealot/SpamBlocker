@@ -1,4 +1,5 @@
-﻿using SpamBlocker.program.data;
+﻿using SpamBlocker.program.data.IP;
+using SpamBlocker.program.data.FileSetting;
 using SpamBlocker.program.logic;
 using SpamBlocker.program.ui;
 using System;
@@ -20,13 +21,9 @@ namespace SpamBlocker.program
 
         static void Main(string[] args)
         {
-            FileSettingSection section = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).Sections["fileSettingsSection"] as FileSettingSection;
-            FileSettingElementCollection coll = section.FileSettings;
-            foreach (FileSettingElement element in coll)
-            {
-                Console.WriteLine(element.ReadPath);
-            }
-
+#if DEBUG
+            Debug();
+#endif
             Logger l = Logger.getINSTANCE();
             if (debug())
             {
@@ -38,20 +35,40 @@ namespace SpamBlocker.program
                 l.close();
                 Environment.Exit(0);
             }
-            /*
-            var testSection = ConfigurationManager.GetSection("testSection") as NameValueCollection;
 
-            Console.WriteLine(testSection["testKey"]);
-            */
-            Dictionary<string, IPaddr> dict = FileReader.ReadFolder(ConfigurationManager.AppSettings.Get("readPath"));
+
+            FileSettingSection section = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).Sections["fileSettingsSection"] as FileSettingSection;
+            FileSettingElementCollection coll = section.FileSettings;
+            foreach (FileSettingElement element in coll)
+            {
+                FileReader.ReadFolder(element);
+                Console.WriteLine(element.ReadPath);
+            }
+
 
 
 #if !DEBUG
-            FirewallManager.BlockIPs(dict);
+            FirewallManager.BlockIPs(IPManager.getInstance().Values);
 #else
+            Debug();
             Console.ReadKey();
 #endif
             l.close();
+        }
+
+        static void Debug()
+        {
+            IP i1 = new IPaddr("192.168.1.237", 100);
+            IP i2 = new IPrange("192.168.1.1", 25, 100, true);
+            Console.WriteLine(i1);
+            Console.WriteLine(i2);
+
+            Console.WriteLine(IP.Masked("192.168.1.1", 9));
+
+            foreach (IP iP in IPManager.getInstance().Values)
+            {
+                Console.WriteLine("Ip: " + iP + " count: " + iP.Count);
+            }
         }
     }
 }

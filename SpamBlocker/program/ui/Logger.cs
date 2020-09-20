@@ -1,4 +1,4 @@
-﻿using SpamBlocker.program.data;
+﻿using SpamBlocker.program.data.IP;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -52,15 +52,24 @@ namespace SpamBlocker.program.ui
             fOut.WriteLine("Name of the accessed file is: " + name);
         }
 
-        public void logIP(IPaddr ip)
+        public void logIP(IP ip)
         {
             DateTime now = DateTime.Now;
             if (logContent.Contains(ip.ToString()))
                 return;
             logContent += ip;
             StringBuilder sb = new StringBuilder();
-            sb.Append(ip)
-                .Append(" was blocked with ")
+            bool rule = false;
+            if (ip.ruleName != "")
+            {
+                rule = true;
+                sb.Append("Rule ")
+                    .Append(ip.ruleName);
+
+            }
+            sb.Append(rule ? " blocked " : "Blocked ")
+                .Append(ip)
+                .Append(" with ")
                 .Append(ip.Count)
                 .Append(" attempts on the ")
                 .Append(now)

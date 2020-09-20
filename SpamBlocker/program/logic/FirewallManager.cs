@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
 using NetFwTypeLib;
-using SpamBlocker.program.data;
+using SpamBlocker.program.data.IP;
 using SpamBlocker.program.ui;
 
 namespace SpamBlocker.program.logic
@@ -12,10 +12,10 @@ namespace SpamBlocker.program.logic
     {
         private static readonly string ruleName = ConfigurationManager.AppSettings.Get("fwRuleName");
 
-        public static void BlockIPs(Dictionary<string, IPaddr> ips)
+        public static void BlockIPs(Dictionary<string, IP>.ValueCollection ips)
         {
             bool newRule = false;
-            bool noTrheads = true;
+            bool noThreats = true;
             Logger l = Logger.getINSTANCE();
             INetFwPolicy2 fwPolicy2 = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
             INetFwRule _rule = null;
@@ -44,11 +44,11 @@ namespace SpamBlocker.program.logic
                 sb.Append(_rule.RemoteAddresses).Append(',');
             }
 
-            foreach (IPaddr ip in ips.Values)
+            foreach (IP ip in ips)
             {
-                if (ip.Count >= int.Parse(ConfigurationManager.AppSettings.Get("count")))
+                if (ip.Count >= ip.DangerCount)
                 {
-                    noTrheads = false;
+                    noThreats = false;
                     sb.Append(ip).Append(',');
                     l.logIP(ip);
                 }
@@ -57,7 +57,7 @@ namespace SpamBlocker.program.logic
             if (sb.Length > 0)
                 sb.Remove(sb.Length - 1, 1);
 
-            if (newRule && !noTrheads)
+            if (newRule && !noThreats)
                 fwPolicy2.Rules.Add(_rule);
 
             _rule.RemoteAddresses = sb.ToString();

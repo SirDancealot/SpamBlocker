@@ -1,4 +1,5 @@
-﻿using SpamBlocker.program.data;
+﻿using SpamBlocker.program.data.FileSetting;
+using SpamBlocker.program.data.IP;
 using SpamBlocker.program.ui;
 using System;
 using System.Collections.Generic;
@@ -11,15 +12,15 @@ namespace SpamBlocker.program.logic
 {
     class FileReader
     {
-        private static Dictionary<string, IPaddr> addrs = new Dictionary<string, IPaddr>();
-        public static Dictionary<string, IPaddr> ReadFolder(string folder)
+        //private static Dictionary<string, IPaddr> addrs = new Dictionary<string, IPaddr>();
+        public static void ReadFolder(FileSettingElement settings)
         {
-            if (string.IsNullOrWhiteSpace(folder))
+            if (string.IsNullOrWhiteSpace(settings.ReadPath))
             {
-                throw new ArgumentException("Folder Path illegal", nameof(folder));
+                throw new ArgumentException("Folder Path illegal", nameof(settings.ReadPath));
             }
 
-            var directory = new DirectoryInfo(folder);
+            var directory = new DirectoryInfo(settings.ReadPath);
             FileInfo f = directory.GetFiles().OrderBy(sf => sf.Name).Last();
 
             if (Program.debug())
@@ -31,32 +32,30 @@ namespace SpamBlocker.program.logic
 
 
             string sourceFile = f.Name;
-            f = f.CopyTo(ConfigurationManager.AppSettings.Get("runLocation") + "tmp.LOG");
-            ReadFile(f, addrs, sourceFile);
+            string logLoc = ConfigurationManager.AppSettings.Get("runLocation") + "tmp.LOG";
+            if (File.Exists(logLoc))
+                File.Delete(logLoc);
+            f = f.CopyTo(logLoc);
+            ReadFile(f, sourceFile, settings);
             f.Delete();
-
-            return addrs;
         }
 
-        private static void ReadFile(FileInfo f, Dictionary<string, IPaddr> addrs, string sourceFile)
+        private static void ReadFile(FileInfo f, string sourceFile, FileSettingElement settings)
         {
             string fPath = f.FullName;
+            settings.SourceFile = sourceFile;
             foreach (string line in File.ReadLines(fPath))
             {
-                if (line.Contains("due to '504 5.7.4 Unrecognized authentication type'"))
-                {
-                    string ip = line.Split(',')[5].Split(':')[0];
-                    if (addrs.ContainsKey(ip))
-                    {
-                        addrs[ip].Registrer();
-                    }
-                    else
-                    {
-                        IPaddr oIp = new IPaddr(ip);
-                        oIp.sourceFile = sourceFile;
-                        addrs.Add(ip, oIp);
-                    }
-                }
+                if (line.StartsWith(settings.CommentStart) && settings.CommentStart != "")
+                    continue;
+                if (settings.DoSearch)
+                    if (!line.Contains(settings.SearchPattern))
+                        continue;
+
+                string ip = line.Split(settings.Delim)[settings.IpIndex];
+                if (ip.Contains(':'))
+                    ip = ip.Split(':')[0];
+                IPManager.getInstance().Registrer(ip, settings);
             }
         }
     }
