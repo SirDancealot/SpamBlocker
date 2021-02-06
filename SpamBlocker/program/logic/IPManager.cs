@@ -1,12 +1,6 @@
 ﻿using SpamBlocker.program.data.FileSetting;
 using SpamBlocker.program.data.IP;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpamBlocker.program.logic
 {
@@ -21,7 +15,7 @@ namespace SpamBlocker.program.logic
 
         private static IPManager INSTANCE;
 
-        public static IPManager getInstance()
+        public static IPManager GetInstance()
         {
             if (INSTANCE == null)
                 INSTANCE = new IPManager();
@@ -37,9 +31,11 @@ namespace SpamBlocker.program.logic
                     ips[ipr].Registrer(ip);
                 else
                 {
-                    IP _ip = new IPrange(ip, settings.MaskSize, settings.Count, settings.UniqeIps);
-                    _ip.ruleName = settings.RuleName;
-                    _ip.sourceFile = settings.SourceFile;
+                    IP _ip = new IPrange(ip, settings.MaskSize, settings.Count, settings.UniqeIps)
+                    {
+                        ruleName = settings.RuleName,
+                        sourceFile = settings.SourceFile
+                    };
                     ips.Add(ipr, _ip);
                 }
             } else
@@ -48,9 +44,11 @@ namespace SpamBlocker.program.logic
                     ips[ip].Registrer(ip);
                 else
                 {
-                    IP _ip = new IPaddr(ip, settings.Count);
-                    _ip.ruleName = settings.RuleName;
-                    _ip.sourceFile = settings.SourceFile;
+                    IP _ip = new IPaddr(ip, settings.Count)
+                    {
+                        ruleName = settings.RuleName,
+                        sourceFile = settings.SourceFile
+                    };
                     ips.Add(ip, _ip);
                 }
             }

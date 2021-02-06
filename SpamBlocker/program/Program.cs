@@ -3,36 +3,33 @@ using SpamBlocker.program.data.FileSetting;
 using SpamBlocker.program.logic;
 using SpamBlocker.program.ui;
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
 using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpamBlocker.program
 {
     class Program
     {
-        private static string[] yes = { "yes", "on", "true" };
-        public static bool debug() => yes.Contains(ConfigurationManager.AppSettings.Get("debugInfo").ToLower());
-        public static bool isAdmin() => new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
+        private static readonly string[] yes = { "yes", "on", "true" };
+        public static bool Debug() => yes.Contains(ConfigurationManager.AppSettings.Get("debugInfo").ToLower()) || DebugFull();
+        public static bool DebugFull() => "full".Equals(ConfigurationManager.AppSettings.Get("debugInfo").ToLower());
+        public static bool IsAdmin() => new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 
         static void Main(string[] args)
         {
 #if DEBUG
-            Debug();
+            DebugPrint();
 #endif
-            Logger l = Logger.getINSTANCE();
-            if (debug())
+            Logger l = Logger.GetINSTANCE();
+            if (Debug())
             {
-                l.logRun();
+                l.LogRun();
             }
-            if (!isAdmin())
+            if (!IsAdmin())
             {
-                l.logMissingAdmin();
-                l.close();
+                l.LogMissingAdmin();
+                l.Close();
                 Environment.Exit(0);
             }
 
@@ -48,15 +45,15 @@ namespace SpamBlocker.program
 
 
 #if DEBUG
-            Debug();
+            DebugPrint();
             Console.ReadKey();
 #else
             FirewallManager.BlockIPs(IPManager.getInstance().Values);
 #endif
-            l.close();
+            l.Close();
         }
 
-        static void Debug()
+        static void DebugPrint()
         {
             IP i1 = new IPaddr("192.168.1.237", 100);
             IP i2 = new IPrange("192.168.1.1", 25, 100, true);
@@ -65,7 +62,7 @@ namespace SpamBlocker.program
 
             Console.WriteLine(IP.Masked("192.168.1.1", 9));
 
-            foreach (IP iP in IPManager.getInstance().Values)
+            foreach (IP iP in IPManager.GetInstance().Values)
             {
                 Console.WriteLine("Ip: " + iP + " count: " + iP.Count);
             }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace SpamBlocker.program.data.IP
 {
@@ -16,8 +12,10 @@ namespace SpamBlocker.program.data.IP
         {
             Ip = Masked(ip, mask);
             Mask = mask;
-            ips = new List<string>();
-            ips.Add(ip);
+            ips = new List<string>
+            {
+                ip
+            };
             DangerCount = dangerCount;
             UniqueIps = uniqe;
         }

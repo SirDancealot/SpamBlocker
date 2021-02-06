@@ -16,7 +16,7 @@ namespace SpamBlocker.program.logic
         {
             bool newRule = false;
             bool noThreats = true;
-            Logger l = Logger.getINSTANCE();
+            Logger l = Logger.GetINSTANCE();
             INetFwPolicy2 fwPolicy2 = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
             INetFwRule _rule = null;
             foreach (INetFwRule rule in fwPolicy2.Rules)
@@ -50,7 +50,7 @@ namespace SpamBlocker.program.logic
                 {
                     noThreats = false;
                     sb.Append(ip).Append(',');
-                    l.logIP(ip);
+                    l.LogIP(ip);
                 }
 
             }

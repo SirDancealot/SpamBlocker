@@ -1,12 +1,10 @@
 ﻿using SpamBlocker.program.data.FileSetting;
-using SpamBlocker.program.data.IP;
 using SpamBlocker.program.ui;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace SpamBlocker.program.logic
 {
@@ -22,19 +20,18 @@ namespace SpamBlocker.program.logic
 
             var directory = new DirectoryInfo(settings.ReadPath);
 
-            //FileInfo f = directory.GetFiles().OrderBy(sf => sf.Name).Last();
-
             FileInfo[] files = directory.GetFiles().OrderByDescending(sf => sf.Name).ToArray();
 
-            if (Program.debug())
+            if (Program.Debug())
             {
                 if (files[0].Length == 0)
-                    Logger.getINSTANCE().logZero();
-                Logger.getINSTANCE().logFName(files[0].Name);
+                    Logger.GetINSTANCE().LogZero();
+                Logger.GetINSTANCE().LogFName(files[0].Name);
             }
 
-
             string sourceFile = files[0].Name;
+
+            //Make sure a temporary location for the log-files to be copied to exists and that it is empty
             string logLoc = ConfigurationManager.AppSettings.Get("runLocation") + "tmplogs";
             if (Directory.Exists(logLoc))
             {
@@ -46,16 +43,18 @@ namespace SpamBlocker.program.logic
             else
                 Directory.CreateDirectory(logLoc);
 
+            //Coppy log-files to temporary location
             List<FileInfo> fileInfos = new List<FileInfo>();
             for (int i = 0; i < Math.Min(files.Length, settings.FileCount); i++)
             {
                 fileInfos.Add(files[i].CopyTo(logLoc + "\\" + files[i].Name));
-                if (Program.debug())
-                    Logger.getINSTANCE().logCustom("Read file " + files[i].Name);
+                if (Program.DebugFull())
+                    Logger.GetINSTANCE().LogCustom("Read file " + files[i].Name);
             }
 
             ReadFile(fileInfos, sourceFile, settings);
 
+            //Cleanup temporary files
             foreach (var fName in Directory.GetFiles(logLoc))
             {
                 File.Delete(fName);
@@ -79,7 +78,7 @@ namespace SpamBlocker.program.logic
                     string ip = line.Split(settings.Delim)[settings.IpIndex];
                     if (ip.Contains(':'))
                         ip = ip.Split(':')[0];
-                    IPManager.getInstance().Registrer(ip, settings);
+                    IPManager.GetInstance().Registrer(ip, settings);
                 }
             }
         }

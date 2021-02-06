@@ -1,9 +1,7 @@
 ﻿using SpamBlocker.program.data.IP;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace SpamBlocker.program.ui
@@ -15,17 +13,17 @@ namespace SpamBlocker.program.ui
         private static readonly string logPath = ConfigurationManager.AppSettings.Get("runLocation") + "Log.txt";
         private string logContent;
 
-        internal void logRun()
+        internal void LogRun()
         {
             fOut.WriteLine("SpamBlocker was run the " + DateTime.Now);
         }
 
-        internal void logZero()
+        internal void LogZero()
         {
             fOut.WriteLine("The newest accessed logfile had a size of 0");
         }
 
-        internal void logCustom(string msg)
+        internal void LogCustom(string msg)
         {
             fOut.WriteLine(msg);
         }
@@ -52,12 +50,12 @@ namespace SpamBlocker.program.ui
             }
         }
 
-        internal void logFName(string name)
+        internal void LogFName(string name)
         {
             fOut.WriteLine("Name of the newest accessed file is: " + name);
         }
 
-        public void logIP(IP ip)
+        public void LogIP(IP ip)
         {
             DateTime now = DateTime.Now;
             if (logContent.Contains(ip.ToString()))
@@ -85,21 +83,21 @@ namespace SpamBlocker.program.ui
             fOut.WriteLine(sb.ToString());
         }
 
-        public void logMissingAdmin()
+        public void LogMissingAdmin()
         {
             string errorMsg = "SpamBlocker was run with missing privileges the " + DateTime.Now;
             //fOut.Write(Encoding.ASCII.GetBytes(errorMsg), 0, errorMsg.Length);
             fOut.WriteLine(errorMsg);
         }
 
-        public static Logger getINSTANCE()
+        public static Logger GetINSTANCE()
         {
             if (INSTANCE == null)
                 new Logger();
             return INSTANCE;
         }
 
-        public void close()
+        public void Close()
         {
             if (fOut != null)
                 fOut.Close();

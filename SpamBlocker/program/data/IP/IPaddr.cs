@@ -1,8 +1,4 @@
-﻿using System.ComponentModel;
-using System.Configuration;
-using System.Text;
-
-namespace SpamBlocker.program.data.IP
+﻿namespace SpamBlocker.program.data.IP
 {
     class IPaddr : IP
     {
