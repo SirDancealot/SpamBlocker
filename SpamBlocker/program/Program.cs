@@ -6,6 +6,8 @@ using System;
 using System.Configuration;
 using System.Linq;
 using System.Security.Principal;
+using SpamBlocker.program.data.Whitelist;
+using System.Collections.Generic;
 
 namespace SpamBlocker.program
 {
@@ -33,10 +35,17 @@ namespace SpamBlocker.program
                 Environment.Exit(0);
             }
 
+            WhitelistSection wlSection = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).Sections["whitelistSection"] as WhitelistSection;
+            WhitelistElementCollection wlColl = wlSection.Whitelisted;
+            List<IPrange> whitelist = new List<IPrange>();
+            foreach (WhitelistElement element in wlColl)
+            {
+                whitelist.Add(new IPrange(element.IP, element.Range, 0, false));
+            }
 
-            FileSettingSection section = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).Sections["fileSettingsSection"] as FileSettingSection;
-            FileSettingElementCollection coll = section.FileSettings;
-            foreach (FileSettingElement element in coll)
+            FileSettingSection fsSection = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).Sections["fileSettingsSection"] as FileSettingSection;
+            FileSettingElementCollection fsColl = fsSection.FileSettings;
+            foreach (FileSettingElement element in fsColl)
             {
                 FileReader.ReadFolder(element);
                 Console.WriteLine(element.ReadPath);
@@ -48,7 +57,7 @@ namespace SpamBlocker.program
             DebugPrint();
             Console.ReadKey();
 #else
-            FirewallManager.BlockIPs(IPManager.getInstance().Values);
+            FirewallManager.BlockIPs(IPManager.GetInstance().Values, whitelist);
 #endif
             l.Close();
         }

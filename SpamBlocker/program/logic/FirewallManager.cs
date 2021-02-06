@@ -12,7 +12,7 @@ namespace SpamBlocker.program.logic
     {
         private static readonly string ruleName = ConfigurationManager.AppSettings.Get("fwRuleName");
 
-        public static void BlockIPs(Dictionary<string, IP>.ValueCollection ips)
+        public static void BlockIPs(Dictionary<string, IP>.ValueCollection ips, List<IPrange> whitelist)
         {
             bool newRule = false;
             bool noThreats = true;
@@ -48,9 +48,12 @@ namespace SpamBlocker.program.logic
             {
                 if (ip.Count >= ip.DangerCount)
                 {
-                    noThreats = false;
-                    sb.Append(ip).Append(',');
-                    l.LogIP(ip);
+                    if (!isWhitelisted(ip, whitelist))
+                    {
+                        noThreats = false;
+                        sb.Append(ip).Append(',');
+                        l.LogIP(ip);
+                    }
                 }
 
             }
@@ -61,6 +64,27 @@ namespace SpamBlocker.program.logic
                 fwPolicy2.Rules.Add(_rule);
 
             _rule.RemoteAddresses = sb.ToString();
+        }
+
+        private static bool isWhitelisted(IP ip, List<IPrange> whitelist)
+        {
+            foreach (IPrange whiteIP in whitelist)
+            {
+                if (whiteIP.Matches(ip))
+                {
+                    if (Program.Debug())
+                    {
+                        string ips = ip.Ip;
+                        if (ip is IPrange)
+                        {
+                            ips += "/" + (ip as IPrange).Mask;
+                        }
+                        Logger.GetINSTANCE().LogWhitelisted(ips);
+                    }
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

@@ -4,9 +4,9 @@ namespace SpamBlocker.program.data.IP
 {
     class IPrange : IP
     {
-        private int Mask;
-        private bool UniqueIps;
-        List<string> ips;
+        public int Mask { get; }
+        private readonly bool UniqueIps;
+        private readonly List<string> ips;
 
         public IPrange(string ip, int mask, int dangerCount, bool uniqe)
         {
@@ -22,9 +22,11 @@ namespace SpamBlocker.program.data.IP
 
         public override bool Matches(IP ip)
         {
-            if (!(ip is IPrange))
+            if (!Masked(ip.Ip, Mask).Equals(Ip))
                 return false;
-            return base.Matches(ip) && (ip as IPrange).Mask.Equals(this.Mask);
+            if (!(ip is IPrange))
+                return true;
+            return (Mask <= (ip as IPrange).Mask);
         }
 
         public override void Registrer(string ip, int num = 1)

@@ -28,6 +28,11 @@ namespace SpamBlocker.program.ui
             fOut.WriteLine(msg);
         }
 
+        internal void LogWhitelisted(string ip)
+        {
+            fOut.WriteLine("IP: " + ip + " was marked to be blocked, but was found in the whitelist");
+        }
+
         //private FileStream fOut;
         private readonly StreamWriter fOut;
 

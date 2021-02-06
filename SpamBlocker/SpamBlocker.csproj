@@ -68,6 +68,9 @@
     <Compile Include="program\data\FileSetting\FileSettingElementCollection.cs" />
     <Compile Include="program\data\IP\IP.cs" />
     <Compile Include="program\data\IP\IPrange.cs" />
+    <Compile Include="program\data\Whitelist\WhitelistElement.cs" />
+    <Compile Include="program\data\Whitelist\WhitelistElementCollection.cs" />
+    <Compile Include="program\data\Whitelist\WhitelistSection.cs" />
     <Compile Include="program\logic\FileReader.cs" />
     <Compile Include="program\logic\FirewallManager.cs" />
     <Compile Include="program\data\IP\IPaddr.cs" />
@@ -91,5 +94,6 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
