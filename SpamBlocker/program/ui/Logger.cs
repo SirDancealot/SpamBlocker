@@ -22,11 +22,16 @@ namespace SpamBlocker.program.ui
 
         internal void logZero()
         {
-            fOut.WriteLine("The accessed logfile had a size of 0");
+            fOut.WriteLine("The newest accessed logfile had a size of 0");
+        }
+
+        internal void logCustom(string msg)
+        {
+            fOut.WriteLine(msg);
         }
 
         //private FileStream fOut;
-        private StreamWriter fOut;
+        private readonly StreamWriter fOut;
 
 
         private Logger()
@@ -49,7 +54,7 @@ namespace SpamBlocker.program.ui
 
         internal void logFName(string name)
         {
-            fOut.WriteLine("Name of the accessed file is: " + name);
+            fOut.WriteLine("Name of the newest accessed file is: " + name);
         }
 
         public void logIP(IP ip)

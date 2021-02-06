@@ -22,6 +22,13 @@ namespace SpamBlocker.program.data.IP
             UniqueIps = uniqe;
         }
 
+        public override bool Matches(IP ip)
+        {
+            if (!(ip is IPrange))
+                return false;
+            return base.Matches(ip) && (ip as IPrange).Mask.Equals(this.Mask);
+        }
+
         public override void Registrer(string ip, int num = 1)
         {
             if (UniqueIps)

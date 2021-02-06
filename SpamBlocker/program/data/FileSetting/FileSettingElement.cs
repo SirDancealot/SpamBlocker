@@ -86,6 +86,13 @@ namespace SpamBlocker.program.data.FileSetting
             set { this["ruleName"] = value; }
         }
 
+        [ConfigurationProperty("fileCount", DefaultValue = 1, IsRequired = false)]
+        public int FileCount
+        {
+            get { return (int)this["fileCount"]; }
+            set { this["fileCount"] = value; }
+        }
+
         public string SourceFile { get; set; }
     }
 }

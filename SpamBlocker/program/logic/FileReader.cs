@@ -21,41 +21,66 @@ namespace SpamBlocker.program.logic
             }
 
             var directory = new DirectoryInfo(settings.ReadPath);
-            FileInfo f = directory.GetFiles().OrderBy(sf => sf.Name).Last();
+
+            //FileInfo f = directory.GetFiles().OrderBy(sf => sf.Name).Last();
+
+            FileInfo[] files = directory.GetFiles().OrderByDescending(sf => sf.Name).ToArray();
 
             if (Program.debug())
             {
-                if (f.Length == 0)
+                if (files[0].Length == 0)
                     Logger.getINSTANCE().logZero();
-                Logger.getINSTANCE().logFName(f.Name);
+                Logger.getINSTANCE().logFName(files[0].Name);
             }
 
 
-            string sourceFile = f.Name;
-            string logLoc = ConfigurationManager.AppSettings.Get("runLocation") + "tmp.LOG";
-            if (File.Exists(logLoc))
-                File.Delete(logLoc);
-            f = f.CopyTo(logLoc);
-            ReadFile(f, sourceFile, settings);
-            f.Delete();
+            string sourceFile = files[0].Name;
+            string logLoc = ConfigurationManager.AppSettings.Get("runLocation") + "tmplogs";
+            if (Directory.Exists(logLoc))
+            {
+                foreach (var fName in Directory.GetFiles(logLoc))
+                {
+                    File.Delete(fName);
+                }
+            }
+            else
+                Directory.CreateDirectory(logLoc);
+
+            List<FileInfo> fileInfos = new List<FileInfo>();
+            for (int i = 0; i < Math.Min(files.Length, settings.FileCount); i++)
+            {
+                fileInfos.Add(files[i].CopyTo(logLoc + "\\" + files[i].Name));
+                if (Program.debug())
+                    Logger.getINSTANCE().logCustom("Read file " + files[i].Name);
+            }
+
+            ReadFile(fileInfos, sourceFile, settings);
+
+            foreach (var fName in Directory.GetFiles(logLoc))
+            {
+                File.Delete(fName);
+            }
+            Directory.Delete(logLoc);
         }
 
-        private static void ReadFile(FileInfo f, string sourceFile, FileSettingElement settings)
+        private static void ReadFile(List<FileInfo> files, string sourceFile, FileSettingElement settings)
         {
-            string fPath = f.FullName;
             settings.SourceFile = sourceFile;
-            foreach (string line in File.ReadLines(fPath))
+            foreach (FileInfo file in files)
             {
-                if (line.StartsWith(settings.CommentStart) && settings.CommentStart != "")
-                    continue;
-                if (settings.DoSearch)
-                    if (!line.Contains(settings.SearchPattern))
+                foreach (string line in File.ReadLines(file.FullName))
+                {
+                    if (line.StartsWith(settings.CommentStart) && settings.CommentStart != "")
                         continue;
+                    if (settings.DoSearch)
+                        if (!line.Contains(settings.SearchPattern))
+                            continue;
 
-                string ip = line.Split(settings.Delim)[settings.IpIndex];
-                if (ip.Contains(':'))
-                    ip = ip.Split(':')[0];
-                IPManager.getInstance().Registrer(ip, settings);
+                    string ip = line.Split(settings.Delim)[settings.IpIndex];
+                    if (ip.Contains(':'))
+                        ip = ip.Split(':')[0];
+                    IPManager.getInstance().Registrer(ip, settings);
+                }
             }
         }
     }

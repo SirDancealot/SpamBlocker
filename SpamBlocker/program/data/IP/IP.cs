@@ -17,6 +17,8 @@ namespace SpamBlocker.program.data.IP
         public override string ToString() => Ip;
 
         public abstract void Registrer(string ip, int num = 1);
+        public virtual bool Matches(IP ip) => this.Ip.Equals(ip);
+
         public static long ToBits(string ip)
         {
             long bits = 0;

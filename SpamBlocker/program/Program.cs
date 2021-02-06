@@ -47,11 +47,11 @@ namespace SpamBlocker.program
 
 
 
-#if !DEBUG
-            FirewallManager.BlockIPs(IPManager.getInstance().Values);
-#else
+#if DEBUG
             Debug();
             Console.ReadKey();
+#else
+            FirewallManager.BlockIPs(IPManager.getInstance().Values);
 #endif
             l.close();
         }
