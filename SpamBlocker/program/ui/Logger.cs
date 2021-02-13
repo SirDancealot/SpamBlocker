@@ -10,7 +10,7 @@ namespace SpamBlocker.program.ui
     class Logger
     {
         private static Logger INSTANCE;
-        private static readonly string logPath = ConfigurationManager.AppSettings.Get("runLocation") + "Log.txt";
+        private static  string logPath;
         private string logContent;
 
         internal void LogRun()
@@ -40,6 +40,10 @@ namespace SpamBlocker.program.ui
         private Logger()
         {
             INSTANCE = this;
+            logPath = ConfigurationManager.AppSettings.Get("runLocation");
+            if (!logPath.EndsWith("/") || !logPath.EndsWith("\\"))
+                logPath += "/";
+            logPath += "Log.txt";
             if (!File.Exists(logPath))
                 File.Create(logPath).Close();
             logContent = File.ReadAllText(logPath);
