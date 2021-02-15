@@ -95,8 +95,12 @@ namespace SpamBlocker.program.ui
         public void LogMissingAdmin()
         {
             string errorMsg = "SpamBlocker was run with missing privileges the " + DateTime.Now;
-            //fOut.Write(Encoding.ASCII.GetBytes(errorMsg), 0, errorMsg.Length);
-            fOut.WriteLine(errorMsg);
+            LogError(errorMsg);
+        }
+
+        public void LogError(string errorMsg)
+        {
+            fOut.WriteLine("Error: " + errorMsg);
         }
 
         public static Logger GetINSTANCE()

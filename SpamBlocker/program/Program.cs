@@ -64,13 +64,6 @@ namespace SpamBlocker.program
 
         static void DebugPrint()
         {
-            IP i1 = new IPaddr("192.168.1.237", 100);
-            IP i2 = new IPrange("192.168.1.1", 25, 100, true);
-            Console.WriteLine(i1);
-            Console.WriteLine(i2);
-
-            Console.WriteLine(IP.Masked("192.168.1.1", 9));
-
             foreach (IP iP in IPManager.GetInstance().Values)
             {
                 Console.WriteLine("Ip: " + iP + " count: " + iP.Count);

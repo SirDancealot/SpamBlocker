@@ -65,15 +65,59 @@ namespace SpamBlocker.program.logic
         private static void ReadFile(List<FileInfo> files, string sourceFile, FileSettingElement settings)
         {
             settings.SourceFile = sourceFile;
+            string searchType = settings.DoSearch;
+            bool search = !searchType.Equals("off");
+            string[] searchTerms = (!search ? null : settings.SearchPattern.Split(new string[] { "\\n" }, StringSplitOptions.None));
             foreach (FileInfo file in files)
             {
                 foreach (string line in File.ReadLines(file.FullName))
                 {
+                    bool matches = true;
                     if (line.StartsWith(settings.CommentStart) && settings.CommentStart != "")
                         continue;
-                    if (settings.DoSearch)
-                        if (!line.Contains(settings.SearchPattern))
-                            continue;
+
+                    if (search)
+                    {
+                        switch (searchType)
+                        {
+                            case "none":
+                                foreach (var term in searchTerms)
+                                {
+                                    if (line.Contains(term))
+                                    {
+                                        matches = false;
+                                        break;
+                                    }
+                                }
+                                break;
+                            case "any":
+                                matches = false;
+                                foreach (var term in searchTerms)
+                                {
+                                    if (line.Contains(term))
+                                    {
+                                        matches = true;
+                                        break;
+                                    }
+                                }
+                                break;
+                            case "all":
+                                foreach (var term in searchTerms)
+                                {
+                                    if (!line.Contains(term))
+                                    {
+                                        matches = false;
+                                        break;
+                                    }
+                                }
+                                break;
+                            default:
+                                Logger.GetINSTANCE().LogError("invalid value of doSearch parameter in config, use 'off'/'none'/'any'/'all'");
+                                break;
+                        }
+                    }
+                    if (!matches)
+                        continue;
 
                     string ip = line.Split(settings.Delim)[settings.IpIndex];
                     if (ip.Contains(':'))

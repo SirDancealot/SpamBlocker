@@ -46,10 +46,10 @@ namespace SpamBlocker.program.data.FileSetting
             set { this["ipIndex"] = value; }
         }
 
-        [ConfigurationProperty("doSearch", DefaultValue = false, IsRequired = false)]
-        public bool DoSearch
+        [ConfigurationProperty("doSearch", DefaultValue = "off", IsRequired = false)]
+        public string DoSearch
         {
-            get { return (bool)this["doSearch"]; }
+            get { return ((string)this["doSearch"]).ToLower(); }
             set { this["doSearch"] = value; }
         }
 
