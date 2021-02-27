@@ -55,9 +55,9 @@ namespace SpamBlocker.program
 
 #if DEBUG
             DebugPrint();
+            FirewallManager.BlockIPs(IPManager.GetInstance().Values, whitelist);
             Console.ReadKey();
 #else
-            FirewallManager.BlockIPs(IPManager.GetInstance().Values, whitelist);
 #endif
             l.Close();
         }

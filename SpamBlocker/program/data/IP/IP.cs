@@ -23,7 +23,14 @@ namespace SpamBlocker.program.data.IP
             bits += byte.Parse(bytes[0]) << 24;
             bits += byte.Parse(bytes[1]) << 16;
             bits += byte.Parse(bytes[2]) << 8;
-            bits += byte.Parse(bytes[3]);
+            try
+            {
+                bits += byte.Parse(bytes[3]);
+            }
+            catch (System.FormatException)
+            {
+                throw new System.FormatException("Ip contained unexpected data. Could you be using the worng delimiter?");
+            }
 
             return bits;
         }
