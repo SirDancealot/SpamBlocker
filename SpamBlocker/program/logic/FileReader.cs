@@ -13,6 +13,12 @@ namespace SpamBlocker.program.logic
         //private static Dictionary<string, IPaddr> addrs = new Dictionary<string, IPaddr>();
         public static void ReadFolder(FileSettingElement settings)
         {
+            if (!settings.Active)
+            {
+                Logger.GetINSTANCE().LogCustom("Skipping rule " + settings.RuleName + " due to the 'active' setting");
+                Console.WriteLine("Skipping rule {0}", settings.RuleName);
+                return;
+            }
             if (string.IsNullOrWhiteSpace(settings.ReadPath))
             {
                 throw new ArgumentException("Folder Path illegal", nameof(settings.ReadPath));
@@ -119,10 +125,17 @@ namespace SpamBlocker.program.logic
                     if (!matches)
                         continue;
 
-                    string ip = line.Split(settings.Delim)[settings.IpIndex];
-                    if (ip.Contains(':'))
-                        ip = ip.Split(':')[0];
-                    IPManager.GetInstance().Registrer(ip, settings);
+                    try
+                    {
+                        string ip = line.Split(settings.Delim)[settings.IpIndex];
+                        if (ip.Contains(':'))
+                            ip = ip.Split(':')[0];
+                        IPManager.GetInstance().Registrer(ip, settings);
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        throw new IndexOutOfRangeException("Line was not split as expected, have you forgotten to specify the commentPattern");
+                    }
                 }
             }
         }

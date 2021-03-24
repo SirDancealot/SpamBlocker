@@ -25,6 +25,8 @@ namespace SpamBlocker.program.data.IP
             bits += byte.Parse(bytes[2]) << 8;
             try
             {
+                if (bytes[3].Contains("/"))
+                    bytes[3] = bytes[3].Split('/')[0];
                 bits += byte.Parse(bytes[3]);
             }
             catch (System.FormatException)
