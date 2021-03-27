@@ -1,10 +1,25 @@
 ﻿using System.Configuration;
+using System;
 
 namespace SpamBlocker.program.data.FileSetting
 {
     public class FileSettingElement : ConfigurationElement
     {
-        [ConfigurationProperty("readPath", IsKey = true, IsRequired = true)]
+        public FileSettingElement()
+        {
+            guid = Guid.NewGuid();
+        }
+
+        public Guid guid { get; }
+
+        [ConfigurationProperty("ruleName", DefaultValue = "", IsRequired = false)]
+        public string RuleName
+        {
+            get { return (string)this["ruleName"]; }
+            set { this["ruleName"] = value; }
+        }
+
+        [ConfigurationProperty("readPath", IsRequired = true)]
         public string ReadPath
         {
             get { return (string)this["readPath"]; }
@@ -74,13 +89,6 @@ namespace SpamBlocker.program.data.FileSetting
             set { this["commentPattern"] = value; }
         }
         
-        [ConfigurationProperty("ruleName", DefaultValue = "", IsRequired = false)]
-        public string RuleName
-        {
-            get { return (string)this["ruleName"]; }
-            set { this["ruleName"] = value; }
-        }
-
         [ConfigurationProperty("fileCount", DefaultValue = 1, IsRequired = false)]
         public int FileCount
         {

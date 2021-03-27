@@ -48,7 +48,8 @@ namespace SpamBlocker.program
             foreach (FileSettingElement element in fsColl)
             {
                 FileReader.ReadFolder(element);
-                Console.WriteLine(element.ReadPath);
+                if (Debug())
+                    Console.WriteLine("{0}: {1}", element.RuleName, element.ReadPath);
             }
 
 

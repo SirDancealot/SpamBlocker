@@ -12,7 +12,7 @@ namespace SpamBlocker.program.data.FileSetting
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((FileSettingElement)element).ReadPath;
+            return ((FileSettingElement)element).guid;
         }
     }
 }
